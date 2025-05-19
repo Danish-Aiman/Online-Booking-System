@@ -1,0 +1,30 @@
+Data Masking SQL Statement
+CREATE FUNCTION dbo.MaskSensitiveData (@input VARCHAR(20))
+RETURNS VARCHAR(20)
+AS
+BEGIN
+    DECLARE @len INT = LEN(@input);
+    IF @len <= 4
+        RETURN @input;-- If length <= 4, return as is
+    RETURN REPLICATE('*', @len - 4) + RIGHT(@input, 4);
+END;
+GO
+
+CREATE TRIGGER trg_MaskSensitiveData_OnInsert
+ON appointments
+INSTEAD OF INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    INSERT INTO appointments (user_id, full_name, ic_number, date, time, credit_card_number)
+    SELECT
+        user_id,
+        full_name,
+        dbo.MaskSensitiveData(ic_number),
+        date,
+        time,
+        dbo.MaskSensitiveData(credit_card_number)
+    FROM inserted;
+END;
+GO
