@@ -8,4 +8,5 @@ SQL Statement to generate Table in Booking System Database
 3. Appointment SQL Statement.txt for Appoinments Table
 
 SQL Statement to create trigger for Data Masking
+
 Data Masking SQL Statement.txt
